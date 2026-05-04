@@ -1,0 +1,10 @@
+# Backend
+Backend/venv/
+__pycache__/
+
+# Frontend
+Frontend/Medical Camp Project/node_modules/
+
+# General
+.env
+*.log
