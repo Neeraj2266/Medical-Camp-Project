@@ -1,144 +1,282 @@
-import { useState } from 'react'
-import { useData } from '../context/DataContext'
-import { useToast } from './Toast'
+
+import { useState } from "react";
 
 function PatientRegistration() {
-  const { addPatient, logActivity } = useData()
-  const { showToast } = useToast()
+    const [form, setForm] = useState({
+        pid: "",
+        name: "",
+        age: "",
+        gender: "",
+        regdate: "",
+        campdate: "",
+        contact: "",
+        address: "",
+    });
 
-  const [form, setForm] = useState({
-    pid: '', name: '', age: '', gender: '',
-    regdate: '', campdate: '', contact: '', address: ''
-  })
-  const [errors, setErrors] = useState({})
-  const [showSuccess, setShowSuccess] = useState(false)
+    const [errors, setErrors] = useState({});
+    const [success, setSuccess] = useState(false);
 
-  const handleChange = (field, value) => {
-    setForm(prev => ({ ...prev, [field]: value }))
-    setErrors(prev => ({ ...prev, [field]: '' }))
-  }
+    const handleChange = (field, value) => {
+        setForm({ ...form, [field]: value });
+        setErrors({ ...errors, [field]: "" });
+    };
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    const newErrors = {}
-    let ok = true
+    const handleSubmit = (e) => {
+        e.preventDefault();
 
-    if (!form.pid.trim()) { newErrors.pid = 'Patient ID is required'; ok = false }
-    if (!form.name.trim()) { newErrors.name = 'Name is required'; ok = false }
-    if (!form.age || form.age < 0 || form.age > 130) { newErrors.age = 'Valid age required'; ok = false }
-    if (!form.regdate) { newErrors.regdate = 'Registration date is required'; ok = false }
-    if (!form.campdate) { newErrors.campdate = 'Camp date is required'; ok = false }
-    if (!form.contact.trim()) { newErrors.contact = 'Contact is required'; ok = false }
-    if (!form.address.trim()) { newErrors.address = 'Address is required'; ok = false }
+        let newErrors = {};
+        let valid = true;
 
-    setErrors(newErrors)
-    if (!ok) return
+        if (!form.pid) {
+            newErrors.pid = "Patient ID required";
+            valid = false;
+        }
+        if (!form.name) {
+            newErrors.name = "Name required";
+            valid = false;
+        }
+        if (!form.age || form.age < 0 || form.age > 130) {
+            newErrors.age = "Valid age required";
+            valid = false;
+        }
+        if (!form.regdate) {
+            newErrors.regdate = "Required";
+            valid = false;
+        }
+        if (!form.campdate) {
+            newErrors.campdate = "Required";
+            valid = false;
+        }
+        if (!form.contact) {
+            newErrors.contact = "Required";
+            valid = false;
+        }
+        if (!form.address) {
+            newErrors.address = "Required";
+            valid = false;
+        }
 
-    const record = {
-      pid: form.pid.trim(),
-      name: form.name.trim(),
-      age: form.age,
-      gender: form.gender || 'Not specified',
-      regdate: form.regdate,
-      campdate: form.campdate,
-      contact: form.contact.trim(),
-      address: form.address.trim(),
-      date: new Date().toLocaleDateString('en-IN'),
-    }
+        setErrors(newErrors);
 
-    addPatient(record)
-    logActivity('🏥', `New patient registered: ${record.name}`)
-    setForm({ pid: '', name: '', age: '', gender: '', regdate: '', campdate: '', contact: '', address: '' })
-    setShowSuccess(true)
-    setTimeout(() => setShowSuccess(false), 3500)
-    showToast('✅ Patient registered: ' + record.name)
-  }
+        if (!valid) return;
 
-  const handleClear = () => {
-    setForm({ pid: '', name: '', age: '', gender: '', regdate: '', campdate: '', contact: '', address: '' })
-    setErrors({})
-  }
+        console.log("Patient Data:", form);
 
-  return (
-    <>
-      <div className="section-heading">
-        <h2>🏥 Patient Registration</h2>
-        <p>Register new patients for medical camp services.</p>
-      </div>
-      <div className="form-card">
-        <h3 className="form-title">New Patient Form</h3>
-        <form id="patientForm" className="camp-form" noValidate onSubmit={handleSubmit}>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Patient ID *</label>
-              <input type="text" id="p-pid" placeholder="e.g. PID-001"
-                value={form.pid} onChange={(e) => handleChange('pid', e.target.value)} />
-              <span className="ferr" id="ep-pid">{errors.pid || ''}</span>
+        setSuccess(true);
+
+        setForm({
+            pid: "",
+            name: "",
+            age: "",
+            gender: "",
+            regdate: "",
+            campdate: "",
+            contact: "",
+            address: "",
+        });
+
+        setTimeout(() => setSuccess(false), 3000);
+    };
+
+    const handleClear = () => {
+        setForm({
+            pid: "",
+            name: "",
+            age: "",
+            gender: "",
+            regdate: "",
+            campdate: "",
+            contact: "",
+            address: "",
+        });
+        setErrors({});
+    };
+
+    return (
+        <div className="min-h-screen bg-[#f8fafc] p-8 font-sans">
+            <div className="max-w-6xl mx-auto mt-4">
+                {/* Header Section */}
+                <h1 className="text-[1.75rem] font-serif text-slate-800 mb-2 flex items-center gap-2">
+                    🏥 Patient Registration
+                </h1>
+                <p className="text-slate-500 mb-8 text-[15px]">
+                    Register new patients for medical camp services.
+                </p>
+
+                {/* Main Form Card */}
+                <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                    <h2 className="text-[1.05rem] font-bold text-slate-800 mb-8">
+                        New Patient Form
+                    </h2>
+
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* Row 1 */}
+                        <div className="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <label className="block text-[13px] font-bold text-slate-800 mb-2">
+                                    Patient ID *
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="e.g. PID-001"
+                                    value={form.pid}
+                                    onChange={(e) => handleChange("pid", e.target.value)}
+                                    className="w-full border border-slate-200 p-3 rounded-lg bg-slate-50/30 text-[14px] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors"
+                                />
+                                {errors.pid && <p className="text-red-500 text-xs mt-1 font-medium">{errors.pid}</p>}
+                            </div>
+
+                            <div>
+                                <label className="block text-[13px] font-bold text-slate-800 mb-2">
+                                    Patient Name *
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="Patient's full name"
+                                    value={form.name}
+                                    onChange={(e) => handleChange("name", e.target.value)}
+                                    className="w-full border border-slate-200 p-3 rounded-lg bg-slate-50/30 text-[14px] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors"
+                                />
+                                {errors.name && <p className="text-red-500 text-xs mt-1 font-medium">{errors.name}</p>}
+                            </div>
+                        </div>
+
+                        {/* Row 2 */}
+                        <div className="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <label className="block text-[13px] font-bold text-slate-800 mb-2">
+                                    Age *
+                                </label>
+                                <input
+                                    type="number"
+                                    placeholder="Age"
+                                    value={form.age}
+                                    onChange={(e) => handleChange("age", e.target.value)}
+                                    className="w-full border border-slate-200 p-3 rounded-lg bg-slate-50/30 text-[14px] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors"
+                                />
+                                {errors.age && <p className="text-red-500 text-xs mt-1 font-medium">{errors.age}</p>}
+                            </div>
+
+                            <div>
+                                <label className="block text-[13px] font-bold text-slate-800 mb-2">
+                                    Gender
+                                </label>
+                                <select
+                                    value={form.gender}
+                                    onChange={(e) => handleChange("gender", e.target.value)}
+                                    className="w-full border border-slate-200 p-3 rounded-lg bg-slate-50/30 text-[14px] text-slate-600 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors appearance-none"
+                                >
+                                    <option value="" className="text-slate-400">Select gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Row 3 */}
+                        <div className="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <label className="block text-[13px] font-bold text-slate-800 mb-2">
+                                    Date of Registration *
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type="date"
+                                        value={form.regdate}
+                                        onChange={(e) => handleChange("regdate", e.target.value)}
+                                        className="w-full border border-slate-200 p-3 rounded-lg bg-slate-50/30 text-[14px] text-slate-600 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors [color-scheme:light]"
+                                    />
+                                    {errors.regdate && <p className="text-red-500 text-xs mt-1 font-medium">{errors.regdate}</p>}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-[13px] font-bold text-slate-800 mb-2">
+                                    Camp Date *
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type="date"
+                                        value={form.campdate}
+                                        onChange={(e) => handleChange("campdate", e.target.value)}
+                                        className="w-full border border-slate-200 p-3 rounded-lg bg-slate-50/30 text-[14px] text-slate-600 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors [color-scheme:light]"
+                                    />
+                                    {errors.campdate && <p className="text-red-500 text-xs mt-1 font-medium">{errors.campdate}</p>}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Row 4 */}
+                        <div className="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <label className="block text-[13px] font-bold text-slate-800 mb-2">
+                                    Contact No *
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="+91 XXXXXXXXXX"
+                                    value={form.contact}
+                                    onChange={(e) => handleChange("contact", e.target.value)}
+                                    className="w-full border border-slate-200 p-3 rounded-lg bg-slate-50/30 text-[14px] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors"
+                                />
+                                {errors.contact && <p className="text-red-500 text-xs mt-1 font-medium">{errors.contact}</p>}
+                            </div>
+
+                            <div>
+                                <label className="block text-[13px] font-bold text-slate-800 mb-2">
+                                    Address *
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="Full address"
+                                    value={form.address}
+                                    onChange={(e) => handleChange("address", e.target.value)}
+                                    className="w-full border border-slate-200 p-3 rounded-lg bg-slate-50/30 text-[14px] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors"
+                                />
+                                {errors.address && <p className="text-red-500 text-xs mt-1 font-medium">{errors.address}</p>}
+                            </div>
+                        </div>
+
+                        {/* Buttons & Success Message */}
+                        <div className="flex items-center gap-4 mt-10 pt-4">
+                            <button
+                                type="submit"
+                                className="bg-[#10a393] hover:bg-[#0d8f81] text-white font-medium text-[14px] px-6 py-2.5 rounded-lg transition-colors shadow-sm"
+                            >
+                                Register Patient
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={handleClear}
+                                className="bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 font-medium text-[14px] px-6 py-2.5 rounded-lg transition-colors"
+                            >
+                                Clear
+                            </button>
+
+                            {success && (
+                                <p className="text-teal-600 text-sm font-medium ml-4 animate-fade-in">
+                                    ✅ Patient registered successfully!
+                                </p>
+                            )}
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div className="form-group">
-              <label>Patient Name *</label>
-              <input type="text" id="p-name" placeholder="Patient's full name"
-                value={form.name} onChange={(e) => handleChange('name', e.target.value)} />
-              <span className="ferr" id="ep-name">{errors.name || ''}</span>
-            </div>
-          </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Age *</label>
-              <input type="number" id="p-age" placeholder="Age" min="0" max="130"
-                value={form.age} onChange={(e) => handleChange('age', e.target.value)} />
-              <span className="ferr" id="ep-age">{errors.age || ''}</span>
-            </div>
-            <div className="form-group">
-              <label>Gender</label>
-              <select id="p-gender" value={form.gender} onChange={(e) => handleChange('gender', e.target.value)}>
-                <option value="">Select gender</option>
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
-                <option>Prefer not to say</option>
-              </select>
-            </div>
-          </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Date of Registration *</label>
-              <input type="date" id="p-regdate"
-                value={form.regdate} onChange={(e) => handleChange('regdate', e.target.value)} />
-              <span className="ferr" id="ep-regdate">{errors.regdate || ''}</span>
-            </div>
-            <div className="form-group">
-              <label>Camp Date *</label>
-              <input type="date" id="p-campdate"
-                value={form.campdate} onChange={(e) => handleChange('campdate', e.target.value)} />
-              <span className="ferr" id="ep-campdate">{errors.campdate || ''}</span>
-            </div>
-          </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Contact No *</label>
-              <input type="tel" id="p-contact" placeholder="+91 XXXXXXXXXX"
-                value={form.contact} onChange={(e) => handleChange('contact', e.target.value)} />
-              <span className="ferr" id="ep-contact">{errors.contact || ''}</span>
-            </div>
-            <div className="form-group">
-              <label>Address *</label>
-              <input type="text" id="p-address" placeholder="Full address"
-                value={form.address} onChange={(e) => handleChange('address', e.target.value)} />
-              <span className="ferr" id="ep-address">{errors.address || ''}</span>
-            </div>
-          </div>
-          <div className="form-actions">
-            <button type="submit" className="btn-primary">Register Patient</button>
-            <button type="button" className="btn-ghost" onClick={handleClear}>Clear</button>
-          </div>
-        </form>
-        {showSuccess && (
-          <div className="form-success" id="patient-success">✅ Patient registered successfully!</div>
-        )}
-      </div>
-    </>
-  )
+
+            <style>{`
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(5px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .animate-fade-in {
+                    animation: fadeIn 0.3s ease-out forwards;
+                }
+            `}</style>
+        </div>
+    );
 }
 
-export default PatientRegistration
+export default PatientRegistration;
+
