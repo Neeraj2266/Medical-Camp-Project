@@ -1,7 +1,9 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function PatientRegistration() {
+    const navigate = useNavigate();
     const [form, setForm] = useState({
         pid: "",
         name: "",
@@ -96,6 +98,13 @@ function PatientRegistration() {
         <div className="min-h-screen bg-[#f8fafc] p-8 font-sans">
             <div className="max-w-6xl mx-auto mt-4">
                 {/* Header Section */}
+                <button
+                    type="button"
+                    onClick={() => navigate('/Dashboard')}
+                    className="mb-4 flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors text-[14px] font-medium"
+                >
+                    ← Back to Dashboard
+                </button>
                 <h1 className="text-[1.75rem] font-serif text-slate-800 mb-2 flex items-center gap-2">
                     🏥 Patient Registration
                 </h1>
